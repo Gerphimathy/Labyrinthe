@@ -79,8 +79,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   symbol: 124
   connections:
-  - {x: 0, y: 0, z: -1}
-  - {x: 0, y: 0, z: 1}
+  - {x: 0, y: -1, z: 0}
+  - {x: 0, y: 1, z: 0}
 --- !u!1 &7779004618589069821
 GameObject:
   m_ObjectHideFlags: 0
