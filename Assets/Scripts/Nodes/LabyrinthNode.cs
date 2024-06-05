@@ -7,14 +7,17 @@ using UnityEngine.Serialization;
 public abstract class LabyrinthNode : MonoBehaviour
 {
     public char symbol = (char)0;
+    Vector3Int _gridPosition;
     
     public Vector3Int[] connections;
     private LabyrinthNode[] _connectedNodes;
     
     private bool _initialized = false;
     
-    public void Init()
+    public void Init(Vector3Int gridPosition)
     {
+        _gridPosition = gridPosition;
+  
         _connectedNodes = new LabyrinthNode[connections.Length];
         
         for (int i = 0; i < connections.Length; i++)
@@ -23,6 +26,11 @@ public abstract class LabyrinthNode : MonoBehaviour
         }
         
         _initialized = true;
+    }
+    
+    public Vector3Int GetGridPosition()
+    {
+        return _gridPosition;
     }
     
     public bool ConnectionIsFree(Vector3Int connection)
@@ -40,10 +48,12 @@ public abstract class LabyrinthNode : MonoBehaviour
         return false;
     }
 
-    public bool CanConnect(LabyrinthNode other)
+    public bool CanConnect(LabyrinthNode other, Vector3Int direction)
     {
         foreach (var connection in connections)
         {
+            if (connection != direction) continue;
+            
             foreach (var connOther in other.connections)
             {
                 if(

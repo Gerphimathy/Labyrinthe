@@ -65,7 +65,7 @@ public class LabyrinthGenerator : MonoBehaviour
 
         //Instantiate the start node
         GameObject startNode = Instantiate(startNodePrefab, startNodeLocation, Quaternion.identity);
-        startNode.GetComponent<LabyrinthNode>().Init();
+        startNode.GetComponent<LabyrinthNode>().Init(new Vector3Int(startNodeGridX, startNodeGridY, startNodeGridZ));
 
         //Instantiate the grid
         _grid = new char[gridWidth][][];
@@ -215,7 +215,10 @@ public class LabyrinthGenerator : MonoBehaviour
                     List<GameObject> possibleNodes = new List<GameObject>();
                     foreach (var prefab in labyrinthNodePrefabs)
                     {
-                        if (GetLabyrinthNode(prefab).CanConnect(neighbor))
+                        
+                        Vector3Int diff = neighbor.GetGridPosition() - new Vector3Int(x, y, z);
+                        
+                        if (GetLabyrinthNode(prefab).CanConnect(neighbor, diff))
                         {
                             possibleNodes.Add(prefab);
                         }
@@ -225,7 +228,7 @@ public class LabyrinthGenerator : MonoBehaviour
                     
                     GameObject nodePrefab = possibleNodes[Random.Range(0, possibleNodes.Count)];
                     GameObject node = Instantiate(nodePrefab, calcNodePosition(x,y,z), Quaternion.identity);
-                    node.GetComponent<LabyrinthNode>().Init();
+                    node.GetComponent<LabyrinthNode>().Init(new Vector3Int(x, y, z));
                     _nodeInstances[new Vector3Int(x, y, z)] = node;
                     newGrid[x][y][z] = node.GetComponent<LabyrinthNode>().symbol;
                 }
