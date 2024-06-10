@@ -8,6 +8,9 @@ public class LabyrinthGenerator : MonoBehaviour
     //List of prefabs to use for the labyrinth, must be set in the inspector and have a class that inherits from LabyrinthNode
     public GameObject[] labyrinthNodePrefabs;
     public GameObject startNodePrefab;
+    public GameObject winAreaPrefab;
+    
+    private GameObject _winArea;
 
     public int gridWidth = 10;
     public int gridHeight = 10;
@@ -37,7 +40,7 @@ public class LabyrinthGenerator : MonoBehaviour
         return obj.GetComponent<LabyrinthNode>();
     }
 
-    void Start()
+    public void Generate()
     {
         if (!IsLabyrinthNode(startNodePrefab))
         {
@@ -84,18 +87,21 @@ public class LabyrinthGenerator : MonoBehaviour
 
         _grid[startNodeGridX][startNodeGridY][startNodeGridZ] = startNode.GetComponent<LabyrinthNode>().symbol;
         _nodeInstances[new Vector3Int(startNodeGridX, startNodeGridY, startNodeGridZ)] = startNode;
-
-        Debug.Log(_nodePrefabs);
-
+        
 
         AddGrowthNodes(startNodeGridX, startNodeGridY, startNodeGridZ);
         DEBUG_PrintGrid();
 
 
-        for (int g = 0; g < generationDepth; g++)
+        for (int g = 1; g <= generationDepth; g++)
         {
-            Generation();
+            Generation(g, generationDepth);
         }
+    }
+    
+    public GameObject GetWinArea()
+    {
+        return _winArea;
     }
 
     private bool validCoordinate(int x, int y, int z)
@@ -178,7 +184,7 @@ public class LabyrinthGenerator : MonoBehaviour
         return neighbors;
     }
 
-    void Generation()
+    void Generation(int nGen, int genmax)
     {
         char[][][] newGrid = new char[gridWidth][][];
         for (int x = 0; x < gridWidth; x++)
@@ -193,7 +199,8 @@ public class LabyrinthGenerator : MonoBehaviour
                 }
             }
         }
-        
+
+        List<GameObject> final_gen_nodes = new List<GameObject>();
         //Go over all nodes in the grid and replace growth nodes with actual nodes
         for (int x = 0; x < gridWidth; x++)
         {
@@ -204,9 +211,6 @@ public class LabyrinthGenerator : MonoBehaviour
                     if (_grid[x][y][z] != growthSymbol) continue;
 
                     List<LabyrinthNode> neighbours = GetNeighbors(x, y, z);
-                    
-                    Debug.Log(x + " " + y + " " + z);
-                    Debug.Log(neighbours.Count);
                     
                     //Choose a random neighbor to connect to
                     int ran = Random.Range(0, neighbours.Count);
@@ -231,8 +235,19 @@ public class LabyrinthGenerator : MonoBehaviour
                     node.GetComponent<LabyrinthNode>().Init(new Vector3Int(x, y, z));
                     _nodeInstances[new Vector3Int(x, y, z)] = node;
                     newGrid[x][y][z] = node.GetComponent<LabyrinthNode>().symbol;
+                    
+                    final_gen_nodes.Add(node);
                 }
             }
+        }
+        
+        if(nGen == genmax)
+        {
+            //Instantiate the win area in the middle of one of the final generation nodes
+            _winArea = final_gen_nodes[Random.Range(0, final_gen_nodes.Count)];
+            Instantiate(winAreaPrefab, _winArea.transform.position, Quaternion.identity);
+
+            return;
         }
         
         _grid = newGrid;
