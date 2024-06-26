@@ -251,16 +251,20 @@ MonoBehaviour:
   - {fileID: 2527982025144748123, guid: b93b4055746faec498b4878806d494ed, type: 3}
   - {fileID: 2527982025144748123, guid: e7d739c841de5b54b82285a36e4ff756, type: 3}
   - {fileID: 2527982025144748123, guid: 065cae28c876e2744b44301812c61abb, type: 3}
+  - {fileID: 2527982025144748123, guid: 083fd6762d1fa6f4f9781bf577de4ddf, type: 3}
+  - {fileID: 2527982025144748123, guid: 12d2f0e4079d9de49b048de5b34f5ef4, type: 3}
   startNodePrefab: {fileID: 2527982025144748123, guid: 065cae28c876e2744b44301812c61abb, type: 3}
   winAreaPrefab: {fileID: 6740635864389116242, guid: b7aefd9f8867e7a4f978f9591a041ca9, type: 3}
+  useRandomSeed: 1
+  seed: 1
   gridWidth: 10
   gridHeight: 10
-  gridDepth: 1
+  gridDepth: 10
   startNodeLocation: {x: 0, y: 0, z: 0}
   startNodeGridX: 5
   startNodeGridY: 9
-  startNodeGridZ: 0
-  generationDepth: 10
+  startNodeGridZ: 5
+  generationDepth: 12
   gridScale: 5
   emptySymbol: 46
   growthSymbol: 71
@@ -372,7 +376,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.083333336
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0

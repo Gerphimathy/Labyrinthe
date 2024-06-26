@@ -8,6 +8,7 @@ public abstract class LabyrinthNode : MonoBehaviour
 {
     public char symbol = (char)0;
     Vector3Int _gridPosition;
+    public float weight = 1.0f;
     
     public Vector3Int[] connections;
     private LabyrinthNode[] _connectedNodes;

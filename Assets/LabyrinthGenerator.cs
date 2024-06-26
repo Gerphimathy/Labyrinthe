@@ -11,6 +11,9 @@ public class LabyrinthGenerator : MonoBehaviour
     public GameObject winAreaPrefab;
     
     private GameObject _winArea;
+    
+    public bool useRandomSeed = false;
+    public int seed = 42;
 
     public int gridWidth = 10;
     public int gridHeight = 10;
@@ -42,6 +45,12 @@ public class LabyrinthGenerator : MonoBehaviour
 
     public void Generate()
     {
+        if(useRandomSeed) 
+        {
+            seed = Random.Range(0, 1000000);
+        }
+        Random.InitState(seed);
+        
         if (!IsLabyrinthNode(startNodePrefab))
         {
             Debug.LogError("StartNode is not a LabyrinthNode");
@@ -90,7 +99,6 @@ public class LabyrinthGenerator : MonoBehaviour
         
 
         AddGrowthNodes(startNodeGridX, startNodeGridY, startNodeGridZ);
-        DEBUG_PrintGrid();
 
 
         for (int g = 1; g <= generationDepth; g++)
@@ -142,28 +150,6 @@ public class LabyrinthGenerator : MonoBehaviour
         return new Vector3(xPos, yPos, zPos);
     }
 
-    private void DEBUG_PrintGrid()
-    {
-        string gridString = "";
-        for (int z = 0; z < gridDepth; z++)
-        {
-            gridString += "Layer " + z + "\n";
-            for (int y = 0; y < gridHeight; y++)
-            {
-                for (int x = 0; x < gridWidth; x++)
-                {
-                    gridString += _grid[x][y][z] + "\t";
-                }
-
-                gridString += "\n";
-            }
-
-            gridString += "\n";
-        }
-
-        Debug.Log(gridString);
-    }
-
     List<LabyrinthNode> GetNeighbors(int x, int y, int z)
     {
         List<LabyrinthNode> neighbors = new List<LabyrinthNode>();
@@ -184,6 +170,27 @@ public class LabyrinthGenerator : MonoBehaviour
         return neighbors;
     }
 
+    GameObject GetWeightedRandomnodePrefab(GameObject[] prefabs)
+    {
+        float totalWeight = 0;
+        foreach (var prefab in prefabs)
+        {
+            totalWeight += GetLabyrinthNode(prefab).weight;
+        }
+
+        float randomWeight = Random.Range(0, totalWeight);
+        foreach (var prefab in prefabs)
+        {
+            randomWeight -= GetLabyrinthNode(prefab).weight;
+            if (randomWeight <= 0)
+            {
+                return prefab;
+            }
+        }
+
+        return null;
+    }
+    
     void Generation(int nGen, int genmax)
     {
         char[][][] newGrid = new char[gridWidth][][];
@@ -230,7 +237,7 @@ public class LabyrinthGenerator : MonoBehaviour
                     
                     if (possibleNodes.Count == 0) continue;
                     
-                    GameObject nodePrefab = possibleNodes[Random.Range(0, possibleNodes.Count)];
+                    GameObject nodePrefab = GetWeightedRandomnodePrefab(possibleNodes.ToArray());
                     GameObject node = Instantiate(nodePrefab, calcNodePosition(x,y,z), Quaternion.identity);
                     node.GetComponent<LabyrinthNode>().Init(new Vector3Int(x, y, z));
                     _nodeInstances[new Vector3Int(x, y, z)] = node;
