@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
+using System.IO;
 using Debug = UnityEngine.Debug;
 
 public class BlenderCLIHandler : MonoBehaviour
@@ -12,6 +13,10 @@ public class BlenderCLIHandler : MonoBehaviour
     public int textureHeight = 1024;
     public string savePath = "/Assets/Generated/";
     public int toGenerate = 1;
+    
+    public enum BLENDER_VERSION {BLENDER_4_X_X, BLENDER_X_X};
+    
+    public BLENDER_VERSION blenderVersion = BLENDER_VERSION.BLENDER_4_X_X;
     
     bool canConnect()
     {
@@ -39,39 +44,71 @@ public class BlenderCLIHandler : MonoBehaviour
         scriptText = scriptText.Replace("$$HEIGHT$$", textureHeight.ToString());
         scriptText = scriptText.Replace("$$SAVE_LOCATION$$", savePath);
         scriptText = scriptText.Replace("$$FNAME$$", Fname);
+
+        switch (blenderVersion)
+        {
+            case BLENDER_VERSION.BLENDER_4_X_X:
+                scriptText = scriptText.Replace("$$BLENDER_VERSION$$", "4");
+                break;
+            case BLENDER_VERSION.BLENDER_X_X:
+                scriptText = scriptText.Replace("$$BLENDER_VERSION$$", "3");
+                break;
+        }
         
-        return scriptText;
+        //Write the script to a file in savepath
+        string scriptPath = savePath + Fname + ".py";
+        System.IO.File.WriteAllText(scriptPath, scriptText);
+        
+        return scriptPath;
     }
 
-    bool generateCreature(string scriptText)
+    bool generateCreature(string scriptPath)
     {
         try
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo(BLENDER_EXE);
+            ProcessStartInfo startInfo = new ProcessStartInfo(BLENDER_EXE); 
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
             startInfo.WindowStyle = ProcessWindowStyle.Normal;
             //startInfo.CreateNoWindow = true;
-            startInfo.Arguments = "--help --background --python-expr \"" + scriptText + "\"";
-            Process.Start(startInfo);
+            startInfo.Arguments =  "--background --python \"" + scriptPath + "\"";
+
+            Process process = new Process();
+            process.StartInfo = startInfo;
+            process.Start();
             
-            //Pause
-            System.Threading.Thread.Sleep(5000);
+            string output = process.StandardOutput.ReadToEnd();
+            string error = process.StandardError.ReadToEnd();
+            Debug.Log("Out : " + output);
+            Debug.LogError("Error : " + error);
+            //process.WaitForExit();
             
-        }catch(System.Exception e)
-        {
+        }catch(System.Exception e) {
+            Debug.LogError(e);
+            
             return false;
         }
         return true;
     }
-    
+
     void Start()
     {
+        savePath = savePath.Replace(@"\\", @"\").Replace(@"\", @"\\");
+        
         if (!canConnect())
         {
             Debug.LogError("Blender not found at path: " + BLENDER_EXE);
         }
         
-        string creature1Content = generateCreatureScriptFile("creature1");
-        generateCreature(creature1Content);
+        if(generateCreature(generateCreatureScriptFile("creature1")))
+        {
+            Debug.Log("Generated creature 1");
+        }
+        else
+        {
+            Debug.LogError("Failed to generate creature 1");
+        }
 
     }
 

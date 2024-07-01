@@ -504,8 +504,9 @@ POP = 1
 
 WIDTH = $$WIDTH$$
 HEIGHT = $$HEIGHT$$
-SAVE_LOCATION = $$SAVE_LOCATION$$
-FNAME = $$FNAME$$
+SAVE_LOCATION = "$$SAVE_LOCATION$$"
+FNAME = r'$$FNAME$$'
+BLENDER_VERSION = $$BLENDER_VERSION$$
 
 objs,mats = genetic(POP)
 
@@ -542,6 +543,9 @@ for i in range(POP):
     bpy.ops.object.bake(type='DIFFUSE', save_mode='EXTERNAL')        
     image.save_render(SAVE_LOCATION+FNAME+'.png')
    
-bpy.ops.export_scene.gltf(filepath=SAVE_LOCATION+FNAME+'.glb')
+if BLENDER_VERSION <= 3:
+    bpy.ops.export_scene.obj(filepath=SAVE_LOCATION+FNAME+'.obj')
+else:
+    bpy.ops.wm.obj_export(filepath=SAVE_LOCATION+FNAME+'.obj')
 
         
