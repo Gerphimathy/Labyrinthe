@@ -542,10 +542,24 @@ for i in range(POP):
     obj.select_set(True)
     bpy.ops.object.bake(type='DIFFUSE', save_mode='EXTERNAL')        
     image.save_render(SAVE_LOCATION+FNAME+'.png')
+    
+    bsdf = mat.node_tree.nodes.get('Principled BSDF')
+    
+    # Change tex_node image to the generated one
+    tex_node.image = image
+    
+    # Link the image to the base color
+    mat.node_tree.links.new(tex_node.outputs['Color'], bsdf.inputs['Base Color'])
+    
+    mapping = mat.node_tree.nodes.new('ShaderNodeMapping')
+    TexCoord = mat.node_tree.nodes.new('ShaderNodeTexCoord')
+    
+    mat.node_tree.links.new(TexCoord.outputs['UV'], mapping.inputs['Vector'])
+    mat.node_tree.links.new(mapping.outputs['Vector'], tex_node.inputs['Vector'])
    
 if BLENDER_VERSION <= 3:
-    bpy.ops.export_scene.obj(filepath=SAVE_LOCATION+FNAME+'.obj')
+    bpy.ops.export_scene.fbx(filepath=SAVE_LOCATION+FNAME+'.obj', export_uv=True, export_normals=True, export_materials=True)
 else:
-    bpy.ops.wm.obj_export(filepath=SAVE_LOCATION+FNAME+'.obj')
+    bpy.ops.wm.obj_export(filepath=SAVE_LOCATION+FNAME+'.obj', export_uv=True, export_normals=True, export_materials=True)
 
         

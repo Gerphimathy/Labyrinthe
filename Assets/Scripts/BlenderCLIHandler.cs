@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
 using System.IO;
+using Dummiesman;
+using Dummiesman;
 using Debug = UnityEngine.Debug;
 
 public class BlenderCLIHandler : MonoBehaviour
@@ -103,7 +105,22 @@ public class BlenderCLIHandler : MonoBehaviour
         
         if(generateCreature(generateCreatureScriptFile("creature1")))
         {
-            Debug.Log("Generated creature 1");
+            string creaturePath = savePath + "creature1.obj";
+            //Runtime OBJ importer
+            GameObject obj = new OBJLoader().Load(creaturePath).transform.GetChild(0).gameObject;
+            
+            if(obj != null)
+            {
+                obj.transform.position = new Vector3(0, 0, 0);
+                
+                Texture2D texture = new Texture2D(textureWidth, textureHeight);
+                texture.LoadImage(File.ReadAllBytes(savePath + "creature1.png"));
+                obj.GetComponent<MeshRenderer>().material.mainTexture = texture;
+            }
+            else
+            {
+                Debug.LogError("Failed to generate creature 1");
+            }
         }
         else
         {
