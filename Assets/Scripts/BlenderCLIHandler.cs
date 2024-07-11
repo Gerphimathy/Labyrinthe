@@ -96,7 +96,7 @@ public class BlenderCLIHandler : MonoBehaviour
         return true;
     }
 
-    public void generate(int seed, int toGenerate)
+    public GameObject generate(int seed, int toGenerate)
     {
         savePath = savePath.Replace(@"\\", @"\").Replace(@"\", @"\\");
         
@@ -117,7 +117,6 @@ public class BlenderCLIHandler : MonoBehaviour
                 {
                     // Get Child
                     GameObject obj = creatures.transform.GetChild(i).gameObject;
-                    obj.transform.position = new Vector3(0, 0, 0);
                     Texture2D texture = new Texture2D(textureWidth, textureHeight);
                     texture.LoadImage(File.ReadAllBytes(savePath + "creatures"+i+".png"));
                     obj.GetComponent<MeshRenderer>().material.mainTexture = texture;   
@@ -128,11 +127,13 @@ public class BlenderCLIHandler : MonoBehaviour
                     Debug.LogException(ex, this);
                 }
             }
+            return creatures;
         }
         else
         {
             Debug.LogError("Failed to generate creatures");
         }
 
+        return null;
     }
 }
