@@ -122,7 +122,7 @@ public class BlenderCLIHandler : MonoBehaviour
                     var currMat = obj.GetComponent<MeshRenderer>().material;
                     currMat.mainTexture = texture;
                     currMat.SetColor("_Color", Color.white);
-                    currMat.SetColor("_Specular", Color.black);
+                    currMat.SetColor("_SpecColor", Color.black);
                 }
                 catch (Exception ex)
                 {
