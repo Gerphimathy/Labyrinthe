@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -46,6 +47,8 @@ public class BlenderCLIHandler : MonoBehaviour
         scriptText = scriptText.Replace("$$HEIGHT$$", textureHeight.ToString());
         scriptText = scriptText.Replace("$$SAVE_LOCATION$$", savePath);
         scriptText = scriptText.Replace("$$FNAME$$", Fname);
+        scriptText = scriptText.Replace("$$POP$$", toGenerate.ToString());
+
 
         switch (blenderVersion)
         {
@@ -102,29 +105,34 @@ public class BlenderCLIHandler : MonoBehaviour
         {
             Debug.LogError("Blender not found at path: " + BLENDER_EXE);
         }
-        
-        if(generateCreature(generateCreatureScriptFile("creature1")))
+
+        string script = generateCreatureScriptFile("creatures");
+        if(generateCreature(script))
         {
-            string creaturePath = savePath + "creature1.obj";
+            string creaturePath = savePath + "creatures.obj";
             //Runtime OBJ importer
-            GameObject obj = new OBJLoader().Load(creaturePath).transform.GetChild(0).gameObject;
-            
-            if(obj != null)
+            GameObject creatures = new OBJLoader().Load(creaturePath);
+            for (int i = 0; i < toGenerate; i++)
             {
-                obj.transform.position = new Vector3(0, 0, 0);
-                
-                Texture2D texture = new Texture2D(textureWidth, textureHeight);
-                texture.LoadImage(File.ReadAllBytes(savePath + "creature1.png"));
-                obj.GetComponent<MeshRenderer>().material.mainTexture = texture;
-            }
-            else
-            {
-                Debug.LogError("Failed to generate creature 1");
+                try
+                {
+                    // Get Child
+                    GameObject obj = creatures.transform.GetChild(i).gameObject;
+                    obj.transform.position = new Vector3(0, 0, 0);
+                    Texture2D texture = new Texture2D(textureWidth, textureHeight);
+                    texture.LoadImage(File.ReadAllBytes(savePath + "creatures"+i+".png"));
+                    obj.GetComponent<MeshRenderer>().material.mainTexture = texture;   
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError("Failed to generate creature "+i);
+                    Debug.LogException(ex, this);
+                }
             }
         }
         else
         {
-            Debug.LogError("Failed to generate creature 1");
+            Debug.LogError("Failed to generate creatures");
         }
 
     }

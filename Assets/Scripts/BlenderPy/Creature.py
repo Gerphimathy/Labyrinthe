@@ -485,7 +485,7 @@ def genetic(pop_size=20, n_extrusions=20, face_max=1000, scale_range=(0.5, 1.5, 
     for n in range(pop_size):
         mat_individual = mat_pop[n]
         form_individual = form_pop[n]
-        o,m,a = blenderDraw(form_individual, mat_individual, n_extrusions, n, (n * scale_range[1] * 10, 0, 0))
+        o,m,a = blenderDraw(form_individual, mat_individual, n_extrusions, n, (0, 0, 0))
         objs[n] = o
         mats[n] = m    
        
@@ -498,7 +498,7 @@ bpy.ops.object.select_all(action='DESELECT')
 
 #WIDTH = 1024
 #HEIGHT = 1024
-POP = 1
+POP = $$POP$$
 #SAVE_LOCATION = r'C:\Users\Mathis\Downloads\'
 #FNAME = 'test'
 
@@ -517,9 +517,7 @@ bpy.context.scene.render.engine = 'CYCLES'
 for i in range(POP):
     obj = objs[i]
     mat = mats[i]
-    
-    print(obj, mat)
-    
+        
     # Select both object an material from their names
     bpy.context.view_layer.objects.active = obj
     bpy.ops.object.mode_set(mode='EDIT')
@@ -541,7 +539,7 @@ for i in range(POP):
     #select
     obj.select_set(True)
     bpy.ops.object.bake(type='DIFFUSE', save_mode='EXTERNAL')        
-    image.save_render(SAVE_LOCATION+FNAME+'.png')
+    image.save_render(SAVE_LOCATION+FNAME+str(i)+'.png')
     
     bsdf = mat.node_tree.nodes.get('Principled BSDF')
     
