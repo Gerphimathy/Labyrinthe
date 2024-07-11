@@ -515,6 +515,11 @@ objs,mats = genetic(POP)
 # Switch rendering engine to cycles
 bpy.context.scene.render.engine = 'CYCLES'
 
+bpy.context.scene.cycles.bake_type = 'DIFFUSE'
+bpy.context.scene.render.bake.use_pass_direct = False
+bpy.context.scene.render.bake.use_pass_indirect = False
+bpy.context.scene.render.bake.use_pass_color = True
+
 #For all objects, create a UV map
 for i in range(POP):
     obj = objs[i]
@@ -522,6 +527,7 @@ for i in range(POP):
         
     # Select both object an material from their names
     bpy.context.view_layer.objects.active = obj
+    # bpy.ops.transform.translate(value=(0, i * 10, 0))
     bpy.ops.object.mode_set(mode='EDIT')
     bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.uv.smart_project()
@@ -532,15 +538,17 @@ for i in range(POP):
     image = bpy.data.images.new("BakedMaterial " + str(i), WIDTH, HEIGHT)
         
     tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
-    tex_node.name = "Baking Texture"
+    tex_node.name = "Baking Texture " + str(i)
     tex_node.select = True
     mat.node_tree.nodes.active = tex_node
     tex_node.image = image
+    tex_node.select = False
 
     bpy.context.view_layer.objects.active = obj
     #select
     obj.select_set(True)
-    bpy.ops.object.bake(type='DIFFUSE', save_mode='EXTERNAL')        
+    
+    bpy.ops.object.bake(type='DIFFUSE', save_mode='EXTERNAL')
     image.save_render(SAVE_LOCATION+FNAME+str(i)+'.png')
     
     bsdf = mat.node_tree.nodes.get('Principled BSDF')
@@ -551,11 +559,13 @@ for i in range(POP):
     # Link the image to the base color
     mat.node_tree.links.new(tex_node.outputs['Color'], bsdf.inputs['Base Color'])
     
-    mapping = mat.node_tree.nodes.new('ShaderNodeMapping')
-    TexCoord = mat.node_tree.nodes.new('ShaderNodeTexCoord')
+    #mapping = mat.node_tree.nodes.new('ShaderNodeMapping')
+    #TexCoord = mat.node_tree.nodes.new('ShaderNodeTexCoord')
     
-    mat.node_tree.links.new(TexCoord.outputs['UV'], mapping.inputs['Vector'])
-    mat.node_tree.links.new(mapping.outputs['Vector'], tex_node.inputs['Vector'])
+    #mat.node_tree.links.new(TexCoord.outputs['UV'], mapping.inputs['Vector'])
+    #mat.node_tree.links.new(mapping.outputs['Vector'], tex_node.inputs['Vector'])
+    
+    obj.select_set(False)
    
 if BLENDER_VERSION <= 3:
     bpy.ops.export_scene.fbx(filepath=SAVE_LOCATION+FNAME+'.obj', export_uv=True, export_normals=True, export_materials=True)

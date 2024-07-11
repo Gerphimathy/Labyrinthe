@@ -61,3 +61,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+Assets/Scripts/BlenderPy/[Cc]reature*
+!Assets/Scripts/BlenderPy/Creature.py
+.idea/*

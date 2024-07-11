@@ -5,7 +5,6 @@ using UnityEngine;
 using System.Diagnostics;
 using System.IO;
 using Dummiesman;
-using Dummiesman;
 using Debug = UnityEngine.Debug;
 
 public class BlenderCLIHandler : MonoBehaviour
@@ -31,6 +30,7 @@ public class BlenderCLIHandler : MonoBehaviour
             Process.Start(startInfo);
         }catch(System.Exception e)
         {
+            Debug.LogError(e.Message);
             return false;
         }
         return true;
@@ -84,7 +84,7 @@ public class BlenderCLIHandler : MonoBehaviour
             
             string output = process.StandardOutput.ReadToEnd();
             string error = process.StandardError.ReadToEnd();
-            Debug.Log("Out : " + output);
+            Debug.Log("Out : " + output); 
             Debug.LogError("Error : " + error);
             //process.WaitForExit();
             
@@ -120,7 +120,10 @@ public class BlenderCLIHandler : MonoBehaviour
                     obj.transform.position = new Vector3(0, 0, 0);
                     Texture2D texture = new Texture2D(textureWidth, textureHeight);
                     texture.LoadImage(File.ReadAllBytes(savePath + "creatures"+i+".png"));
-                    obj.GetComponent<MeshRenderer>().material.mainTexture = texture;   
+                    var currMat = obj.GetComponent<MeshRenderer>().material;
+                    currMat.mainTexture = texture;
+                    currMat.SetColor("_Color", Color.white);
+                    currMat.SetColor("_Specular", Color.black);
                 }
                 catch (Exception ex)
                 {
