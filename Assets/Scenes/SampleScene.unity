@@ -314,8 +314,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   navMeshSurface: {fileID: 1565908696}
   generator: {fileID: 712787204}
+  blenderCLIHandler: {fileID: 1108408432}
   playerPrefab: {fileID: 5637186082712380806, guid: d1b6de386aa7f924f88741f0c9a5c9f9, type: 3}
   playerStart: {x: 0, y: 0.5, z: 0}
+  toGenerate: 2
 --- !u!4 &864061579
 Transform:
   m_ObjectHideFlags: 0
@@ -365,7 +367,6 @@ MonoBehaviour:
   textureWidth: 1024
   textureHeight: 1024
   savePath: C:/Ecole/Labyrinthe_Assets/
-  toGenerate: 5
   blenderVersion: 0
 --- !u!4 &1108408433
 Transform:

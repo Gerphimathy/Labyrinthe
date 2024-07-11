@@ -507,6 +507,8 @@ HEIGHT = $$HEIGHT$$
 SAVE_LOCATION = "$$SAVE_LOCATION$$"
 FNAME = r'$$FNAME$$'
 BLENDER_VERSION = $$BLENDER_VERSION$$
+random.seed($$SEED$$)
+
 
 objs,mats = genetic(POP)
 

@@ -12,8 +12,10 @@ public class GameHandler : MonoBehaviour
     
     [Header ("Labyrinth generation")]
     public LabyrinthGenerator generator;
+    public BlenderCLIHandler blenderCLIHandler;
     public GameObject playerPrefab;
     public Vector3 playerStart = new Vector3(0, 0.5f, 0);
+    public int toGenerate = 2;
 
     private GameObject _player;    
     private GameObject _goal;
@@ -22,6 +24,8 @@ public class GameHandler : MonoBehaviour
     void Start()
     {
         generator.Generate();
+        int seed = generator.seed;
+        blenderCLIHandler.generate(seed, toGenerate);
         
         navMeshSurface.BuildNavMesh();
         

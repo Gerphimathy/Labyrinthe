@@ -15,7 +15,6 @@ public class BlenderCLIHandler : MonoBehaviour
     public int textureWidth = 1024;
     public int textureHeight = 1024;
     public string savePath = "/Assets/Generated/";
-    public int toGenerate = 1;
     
     public enum BLENDER_VERSION {BLENDER_4_X_X, BLENDER_X_X};
     
@@ -37,7 +36,7 @@ public class BlenderCLIHandler : MonoBehaviour
         return true;
     }
     
-    string generateCreatureScriptFile(string Fname)
+    string generateCreatureScriptFile(string Fname, int seed, int toGenerate)
     {
         string script = "Assets/Scripts/BlenderPy/Creature.py";
         
@@ -48,7 +47,7 @@ public class BlenderCLIHandler : MonoBehaviour
         scriptText = scriptText.Replace("$$SAVE_LOCATION$$", savePath);
         scriptText = scriptText.Replace("$$FNAME$$", Fname);
         scriptText = scriptText.Replace("$$POP$$", toGenerate.ToString());
-
+        scriptText = scriptText.Replace("$$SEED$$", seed.ToString());
 
         switch (blenderVersion)
         {
@@ -97,7 +96,7 @@ public class BlenderCLIHandler : MonoBehaviour
         return true;
     }
 
-    void Start()
+    public void generate(int seed, int toGenerate)
     {
         savePath = savePath.Replace(@"\\", @"\").Replace(@"\", @"\\");
         
@@ -106,7 +105,7 @@ public class BlenderCLIHandler : MonoBehaviour
             Debug.LogError("Blender not found at path: " + BLENDER_EXE);
         }
 
-        string script = generateCreatureScriptFile("creatures");
+        string script = generateCreatureScriptFile("creatures", seed, toGenerate);
         if(generateCreature(script))
         {
             string creaturePath = savePath + "creatures.obj";
@@ -135,10 +134,5 @@ public class BlenderCLIHandler : MonoBehaviour
             Debug.LogError("Failed to generate creatures");
         }
 
-    }
-
-    void Update()
-    {
-        
     }
 }
