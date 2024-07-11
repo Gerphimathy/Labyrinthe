@@ -317,7 +317,10 @@ MonoBehaviour:
   blenderCLIHandler: {fileID: 1108408432}
   playerPrefab: {fileID: 5637186082712380806, guid: d1b6de386aa7f924f88741f0c9a5c9f9, type: 3}
   playerStart: {x: 0, y: 0.5, z: 0}
-  toGenerate: 2
+  toGenerate: 5
+  creaturesRoamingThreshold: 20
+  creaturesRoamingRange: 500
+  creatureSpreadRange: 5000
 --- !u!4 &864061579
 Transform:
   m_ObjectHideFlags: 0
