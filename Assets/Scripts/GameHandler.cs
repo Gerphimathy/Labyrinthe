@@ -20,6 +20,8 @@ public class GameHandler : MonoBehaviour
     public float creaturesRoamingThreshold = 20.0f;
     public float creaturesRoamingRange = 500.0f;
     public float creatureSpreadRange = 5000.0f;
+    public int creatureCirclerMaxPathLength = 10;
+    public int creatureStalkerRange = 20;
 
     private GameObject _player;    
     private GameObject _goal;
@@ -49,6 +51,13 @@ public class GameHandler : MonoBehaviour
         
         _player = Instantiate(playerPrefab, playerStart, Quaternion.identity);
     }
+    
+        
+    public Vector3 GetPlayerPosition()
+    {
+        return _player.transform.position;
+    }
+
     
     public Vector3 RandomNavmeshLocation(float radius) 
     {

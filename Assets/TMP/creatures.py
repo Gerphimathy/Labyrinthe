@@ -1,4 +1,4 @@
-﻿# Deap genetic
+# Deap genetic
 
 import random
 from deap import base, creator, tools
@@ -498,16 +498,16 @@ bpy.ops.object.select_all(action='DESELECT')
 
 #WIDTH = 1024
 #HEIGHT = 1024
-POP = $$POP$$
+POP = 10
 #SAVE_LOCATION = r'C:\Users\Mathis\Downloads\'
 #FNAME = 'test'
 
-WIDTH = $$WIDTH$$
-HEIGHT = $$HEIGHT$$
-SAVE_LOCATION = "$$SAVE_LOCATION$$"
-FNAME = r'$$FNAME$$'
-BLENDER_VERSION = $$BLENDER_VERSION$$
-random.seed($$SEED$$)
+WIDTH = 1024
+HEIGHT = 1024
+SAVE_LOCATION = "D:/Projet Ecole/Labyrinthe/Assets/TMP/"
+FNAME = r'creatures'
+BLENDER_VERSION = 4
+random.seed(503464)
 
 
 objs,mats = genetic(POP)
