@@ -368,7 +368,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1116875853b3170479fb802b01180d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BLENDER_EXE: D:\SteamGames\steamapps\common\Blender\blender.exe
+  BLENDER_EXE: D:\Perso\Apps\Blender\blender.exe
   textureWidth: 1024
   textureHeight: 1024
   savePath: D:/Projet Ecole/Labyrinthe/Assets/TMP/

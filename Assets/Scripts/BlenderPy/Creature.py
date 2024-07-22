@@ -476,7 +476,7 @@ def genetic(pop_size=20, n_extrusions=20, face_max=1000, scale_range=(0.5, 1.5, 
     toolbox.register("mutate", tools.mutFlipBit, indpb=0.05)
     toolbox.register("select", tools.selTournament, tournsize=3)
 
-    mat_pop = toolbox.mat_population(n=pop_size)
+    mat_pop = toolbox.mat_population(n=pop_size*2)
     form_pop = toolbox.form_population(n=pop_size)
 
     # get
@@ -487,7 +487,10 @@ def genetic(pop_size=20, n_extrusions=20, face_max=1000, scale_range=(0.5, 1.5, 
         form_individual = form_pop[n]
         o,m,a = blenderDraw(form_individual, mat_individual, n_extrusions, n, (0, 0, 0))
         objs[n] = o
-        mats[n] = m    
+        mats[n] = m
+
+    for n in range(pop_size, pop_size * 2):
+        mats[n] = blenderCreateTex(mat_pop[n], n)
        
     return (objs, mats)
 
@@ -512,8 +515,15 @@ random.seed($$SEED$$)
 
 objs,mats = genetic(POP)
 
+bpy.ops.mesh.primitive_plane_add(location=(1000,0,0))
+plane = bpy.context.active_object
+plane.select = False
+
+
+
 # Switch rendering engine to cycles
 bpy.context.scene.render.engine = 'CYCLES'
+bpy.context.scene.cycles.device = 'GPU'
 
 bpy.context.scene.cycles.bake_type = 'DIFFUSE'
 bpy.context.scene.render.bake.use_pass_direct = False
@@ -525,7 +535,7 @@ for i in range(POP):
     obj = objs[i]
     mat = mats[i]
         
-    # Select both object an material from their names
+    # Select both object and material from their names
     bpy.context.view_layer.objects.active = obj
     # bpy.ops.transform.translate(value=(0, i * 10, 0))
     bpy.ops.object.mode_set(mode='EDIT')
@@ -536,7 +546,6 @@ for i in range(POP):
     
     # Create a new image
     image = bpy.data.images.new("BakedMaterial " + str(i), WIDTH, HEIGHT)
-    image.save_render(SAVE_LOCATION+FNAME+str(i)+'_flat.png')
 
     tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
     tex_node.name = "Baking Texture " + str(i)
@@ -567,7 +576,36 @@ for i in range(POP):
     #mat.node_tree.links.new(mapping.outputs['Vector'], tex_node.inputs['Vector'])
     
     obj.select_set(False)
-   
+
+
+
+plane.select_set(True)
+
+for i in range(POP,POP*2):
+    mat = mats[i]
+    plane.data.materials.append(mat)
+    plane.active_material = mat
+
+    image = bpy.data.images.new("BakedMaterialRoom " + str(i-POP), WIDTH, HEIGHT)
+    tex_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
+    tex_node.name = "Baking Texture Room " + str(i-POP)
+    tex_node.select = True
+    mat.node_tree.nodes.active = tex_node
+    tex_node.image = image
+    tex_node.select = False
+
+    bpy.context.view_layer.objects.active = plane
+    #select
+    plane.select_set(True)
+
+    bpy.ops.object.bake(type='DIFFUSE', save_mode='EXTERNAL')
+    image.save_render(SAVE_LOCATION+"room"+str(i-POP)+'.png')
+
+
+plane.select_set(True)
+bpy.ops.object.delete(use_global=False, confirm=False)
+
+
 if BLENDER_VERSION <= 3:
     bpy.ops.export_scene.fbx(filepath=SAVE_LOCATION+FNAME+'.obj', export_uv=True, export_normals=True, export_materials=True)
 else:
