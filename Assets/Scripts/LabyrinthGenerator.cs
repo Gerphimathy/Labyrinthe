@@ -37,6 +37,17 @@ public class LabyrinthGenerator : MonoBehaviour
         if (obj == null) return false;
         return obj.GetComponent<LabyrinthNode>() != null; //Check if the object inherits from LabyrinthNode
     }
+    
+    public List<GameObject> GetLabyrinthNodes()
+    {
+        List<GameObject> nodes = new List<GameObject>();
+        foreach (var node in _nodeInstances)
+        {
+            nodes.Add(node.Value);
+        }
+        
+        return nodes;
+    }
 
     LabyrinthNode GetLabyrinthNode(GameObject obj)
     {

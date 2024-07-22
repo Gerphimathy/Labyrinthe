@@ -19,6 +19,8 @@ public class BlenderCLIHandler : MonoBehaviour
     
     public BLENDER_VERSION blenderVersion = BLENDER_VERSION.BLENDER_4_X_X;
     
+    private List<Texture2D> _roomTextures = new List<Texture2D>();
+    
     bool canConnect()
     {
         try
@@ -123,6 +125,10 @@ public class BlenderCLIHandler : MonoBehaviour
                     currMat.mainTexture = texture;
                     currMat.SetColor("_Color", Color.white);
                     currMat.SetColor("_SpecColor", Color.black);
+                    
+                    Texture2D roomTexture = new Texture2D(textureWidth, textureHeight);
+                    roomTexture.LoadImage(File.ReadAllBytes(savePath + "room"+i+".png"));
+                    _roomTextures.Add(roomTexture);
                 }
                 catch (Exception ex)
                 {
@@ -138,5 +144,10 @@ public class BlenderCLIHandler : MonoBehaviour
         }
 
         return null;
+    }
+    
+    public Texture2D GetRandomRoomTexture()
+    {
+        return _roomTextures[UnityEngine.Random.Range(0, _roomTextures.Count)];
     }
 }

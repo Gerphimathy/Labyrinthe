@@ -27,6 +27,21 @@ public class GameHandler : MonoBehaviour
     private GameObject _goal;
     private GameObject _creatures;
     
+    private void AddTextureToChildren(Transform t, Texture2D tex)
+    {
+        Renderer renderer = t.GetComponent<Renderer>();
+        if (renderer != null) 
+        {
+            renderer.material.mainTexture = tex;
+        }
+
+        foreach (Transform child in t) 
+        {
+            AddTextureToChildren(child, tex);
+        }
+    }
+
+    
     // Start is called before the first frame update&
     void Start()
     {
@@ -50,6 +65,14 @@ public class GameHandler : MonoBehaviour
         _goal = generator.GetWinArea();
         
         _player = Instantiate(playerPrefab, playerStart, Quaternion.identity);
+        
+        var LabNodes = generator.GetLabyrinthNodes();
+
+        foreach (var node in LabNodes)
+        {
+            Texture2D roomTexture = blenderCLIHandler.GetRandomRoomTexture();
+            AddTextureToChildren(node.transform, roomTexture);
+        }
     }
     
         

@@ -517,8 +517,7 @@ objs,mats = genetic(POP)
 
 bpy.ops.mesh.primitive_plane_add(location=(1000,0,0))
 plane = bpy.context.active_object
-plane.select = False
-
+bpy.ops.object.select_all(action='DESELECT')
 
 
 # Switch rendering engine to cycles
